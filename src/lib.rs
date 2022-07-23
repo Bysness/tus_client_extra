@@ -44,6 +44,7 @@
 #![doc(html_root_url = "https://docs.rs/tus_client/0.1.1")]
 use crate::http::{default_headers, Headers, HttpHandler, HttpMethod, HttpRequest};
 use std::collections::HashMap;
+use std::collections::hash_map::RandomState;
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter};
 use std::fs::File;
@@ -67,6 +68,11 @@ const DEFAULT_CHUNK_SIZE: usize = 5 * 1024 * 1024;
 pub struct Client<'a> {
     use_method_override: bool,
     http_handler: Box<dyn HttpHandler + 'a>,
+}
+
+pub struct CreateResponse{
+    pub upload_url: String,
+    pub headers: HashMap<String, String, RandomState>
 }
 
 impl<'a> Client<'a> {
@@ -241,7 +247,7 @@ impl<'a> Client<'a> {
     }
 
     /// Create a file on the server, receiving the upload URL of the file.
-    pub fn create(&self, url: &str, path: &Path) -> Result<String, Error> {
+    pub fn create(&self, url: &str, path: &Path) -> Result<CreateResponse, Error> {
         self.create_with_metadata(url, path, HashMap::new())
     }
 
@@ -251,7 +257,7 @@ impl<'a> Client<'a> {
         url: &str,
         path: &Path,
         metadata: HashMap<String, String>,
-    ) -> Result<String, Error> {
+    ) -> Result<CreateResponse, Error> {
         let mut headers = default_headers();
         headers.insert(
             headers::UPLOAD_LENGTH.to_owned(),
@@ -284,7 +290,10 @@ impl<'a> Client<'a> {
             return Err(Error::MissingHeader(headers::LOCATION.to_owned()));
         }
 
-        Ok(location.unwrap().to_owned())
+        Ok(CreateResponse {
+            upload_url: location.unwrap().to_string(),
+            headers: response.headers,
+        })
     }
 
     /// Delete a file on the server.
