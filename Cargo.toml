@@ -1,12 +1,12 @@
 [package]
-name = "tus_client"
+name = "tus_client_extra"
 version = "0.1.1" # remember to update html_root_url
-authors = ["Jon Grythe Stødle <jonstodle@outlook.com>"]
+authors = ["Jon Grythe Stødle <jonstodle@outlook.com>", "Anuraag Vaidya <anuraag@bysness.com>"]
 edition = "2018"
 license = "MIT"
 description = "A Rust native client library to interact with *tus* enabled endpoints."
 keywords = ["tus", "upload", "resumable"]
-repository = "https://github.com/jonstodle/tus_client"
+repository = "https://github.com/Bysness/tus_client_extra"
 readme = "README.md"
 
 
